@@ -286,62 +286,62 @@ public:
    * @param input The audio sample to input
    * @param std::function<double(double)> The function that processes the audio sample at the higher sampling rate
    * @return The audio sample output */
-  T Process(T input, std::function<T(T)> func)
+  T Process(T input, int channel, std::function<T(T)> func)
   {
     T output;
 
     if(mRate == 16)
     {
-      mUpsampler2x.Get(0)->process_sample(mUp2x.Get()[0], mUp2x.Get()[1], input);
-      mUpsampler4x.Get(0)->process_block(mUp4x.Get(), mUp2x.Get(), 2);
-      mUpsampler8x.Get(0)->process_block(mUp8x.Get(), mUp4x.Get(), 4);
-      mUpsampler16x.Get(0)->process_block(mUp16x.Get(), mUp8x.Get(), 8);
+      mUpsampler2x.Get(channel)->process_sample(mUp2x.Get()[0], mUp2x.Get()[1], input);
+      mUpsampler4x.Get(channel)->process_block(mUp4x.Get(), mUp2x.Get(), 2);
+      mUpsampler8x.Get(channel)->process_block(mUp8x.Get(), mUp4x.Get(), 4);
+      mUpsampler16x.Get(channel)->process_block(mUp16x.Get(), mUp8x.Get(), 8);
 
       for (auto i = 0; i < 16; i++)
       {
         mDown16x.Get()[i] = func(mUp16x.Get()[i]);
       }
 
-      mDownsampler16x.Get(0)->process_block(mDown8x.Get(), mDown16x.Get(), 8);
-      mDownsampler8x.Get(0)->process_block(mDown4x.Get(), mDown8x.Get(), 4);
-      mDownsampler4x.Get(0)->process_block(mDown2x.Get(), mDown4x.Get(), 2);
-      output = mDownsampler2x.Get(0)->process_sample(mDown2x.Get());
+      mDownsampler16x.Get(channel)->process_block(mDown8x.Get(), mDown16x.Get(), 8);
+      mDownsampler8x.Get(channel)->process_block(mDown4x.Get(), mDown8x.Get(), 4);
+      mDownsampler4x.Get(channel)->process_block(mDown2x.Get(), mDown4x.Get(), 2);
+      output = mDownsampler2x.Get(channel)->process_sample(mDown2x.Get());
     }
     else if (mRate == 8)
     {
-      mUpsampler2x.Get(0)->process_sample(mUp2x.Get()[0], mUp2x.Get()[1], input);
-      mUpsampler4x.Get(0)->process_block(mUp4x.Get(), mUp2x.Get(), 2);
-      mUpsampler8x.Get(0)->process_block(mUp8x.Get(), mUp4x.Get(), 4);
+      mUpsampler2x.Get(channel)->process_sample(mUp2x.Get()[0], mUp2x.Get()[1], input);
+      mUpsampler4x.Get(channel)->process_block(mUp4x.Get(), mUp2x.Get(), 2);
+      mUpsampler8x.Get(channel)->process_block(mUp8x.Get(), mUp4x.Get(), 4);
 
       for (auto i = 0; i < 8; i++)
       {
         mDown8x.Get()[i] = func(mUp8x.Get()[i]);
       }
 
-      mDownsampler8x.Get(0)->process_block(mDown4x.Get(), mDown8x.Get(), 4);
-      mDownsampler4x.Get(0)->process_block(mDown2x.Get(), mDown4x.Get(), 2);
-      output = mDownsampler2x.Get(0)->process_sample(mDown2x.Get());
+      mDownsampler8x.Get(channel)->process_block(mDown4x.Get(), mDown8x.Get(), 4);
+      mDownsampler4x.Get(channel)->process_block(mDown2x.Get(), mDown4x.Get(), 2);
+      output = mDownsampler2x.Get(channel)->process_sample(mDown2x.Get());
     }
     else if (mRate == 4)
     {
-      mUpsampler2x.Get(0)->process_sample(mUp2x.Get()[0], mUp2x.Get()[1], input);
-      mUpsampler4x.Get(0)->process_block(mUp4x.Get(), mUp2x.Get(), 2);
+      mUpsampler2x.Get(channel)->process_sample(mUp2x.Get()[0], mUp2x.Get()[1], input);
+      mUpsampler4x.Get(channel)->process_block(mUp4x.Get(), mUp2x.Get(), 2);
 
       for (auto i = 0; i < 4; i++)
       {
         mDown4x.Get()[i] = func(mUp4x.Get()[i]);
       }
 
-      mDownsampler4x.Get(0)->process_block(mDown2x.Get(), mDown4x.Get(), 2);
-      output = mDownsampler2x.Get(0)->process_sample(mDown2x.Get());
+      mDownsampler4x.Get(channel)->process_block(mDown2x.Get(), mDown4x.Get(), 2);
+      output = mDownsampler2x.Get(channel)->process_sample(mDown2x.Get());
     }
     else if (mRate == 2)
     {
-      mUpsampler2x.Get(0)->process_sample(mUp2x.Get()[0], mUp2x.Get()[1], input);
+      mUpsampler2x.Get(channel)->process_sample(mUp2x.Get()[0], mUp2x.Get()[1], input);
 
       mDown2x.Get()[0] = func(mUp2x.Get()[0]);
       mDown2x.Get()[1] = func(mUp2x.Get()[1]);
-      output = mDownsampler2x.Get(0)->process_sample(mDown2x.Get());
+      output = mDownsampler2x.Get(channel)->process_sample(mDown2x.Get());
     }
     else
     {
