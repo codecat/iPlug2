@@ -545,6 +545,7 @@ static const char* TextStyleString(ETextStyle style)
     case kTextStyleBold:    return "Bold";
     case kTextStyleItalic:  return "Italic";
   }
+  return "None";
 }
 
 /** Used to manage font and text/text entry style for a piece of text on the UI, independent of draw class/platform.*/
